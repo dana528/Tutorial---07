@@ -1,61 +1,31 @@
-object Q04 extends App {
+import scala.io.StdIn.readLine
+import scala.io.StdIn.readInt
 
-    var accountList:List[Account] = List()
+object Q3 extends App{
 
-    def accCreate(nic:String, accId: Int):Unit = {
-        val acc = new Account(nic, accId)
-        accountList = accountList ::: acc :: Nil
-        println(accountList)
-    }
+    printf("Money for transfer: ")
+    val trans=readInt()
+   
+    val person1=new Account("996632261V", 12345, 75000)
+    val person2=new Account("342312563V", 67891, 40000)
 
-    val find = (a:Int, b:List[Account]) => b.filter(account => account.accId.equals(a))
-    val overdraft = (b:List[Account]) => b.filter(account => account.balance < 0.0)
-    val totalBalance = (b:List[Account]) => b.foldLeft(0.0)((x, y) => x + y.balance)
-    val interest = (b:List[Account]) => b.map(account => if(account.balance > 0) account.balance*0.05 else account.balance*0.1)
+    person1.transfer(person2,trans)
+    println("Balance of money sender: "+person1.Balance)
+    println("Balance of money receiver: "+person2.Balance)
 
-
-    /*              Driver Code                */
-    
-    //create accounts
-    accCreate("1",1)
-    accCreate("2",2)
-
-    //deposit money
-    find(1, accountList)(0).deposit(1000)
-    println(find(1, accountList)(0))
-
-    //transfer money
-    find(1, accountList)(0).transfer(2, 100.0)
-    println(find(2, accountList)(0))
-
-    //list of negative balances
-    println(overdraft(accountList))
-
-    //sum of all account balances
-    println(totalBalance(accountList))
-
-    //final balances of all accounts after apply the interest
-    println(interest(accountList))
 }
 
-class Account(nic:String, val accId: Int, var balance: Double = 0.0){
+class Account(a:String, b:Int, c:Double){
+    val Nic:String=a
+    val AcNo:Int=b;
+    var Balance:Double=c;
+    override def toString ="["+Nic+":"+AcNo +":"+ Balance+"]"
 
-    def withdrow(amount:Double) : Unit = {
-        this.balance = this.balance - amount
+    def withdraw(transfer_amount:Double)=this.Balance-transfer_amount;
+    def deposit(transfer_amount:Double)=this.Balance+transfer_amount;
+
+    def transfer(acnt:Account,trans:Double) ={
+        this.Balance = this.withdraw(trans)
+        acnt.Balance=acnt.deposit(trans)
     }
-
-    def deposit(amount:Double) : Unit = {
-        this.balance = this.balance + amount
-    }
-
-    def transfer(account:Int, amount:Double) : Unit = {
-        val transferAcc = Q04.find(account, Q04.accountList)
-        if (balance < 0.0) println("Insufficient balance")
-        else {
-            this.withdrow(amount)
-            transferAcc(0).deposit(amount)
-        }
-    }
-
-    override def toString = "["+nic+":"+accId +":"+ balance+"]"
 }
