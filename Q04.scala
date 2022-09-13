@@ -1,31 +1,43 @@
-import scala.io.StdIn.readLine
-import scala.io.StdIn.readInt
+object Q4 extends App{
+    val acc1=new account("01V",123,25000)
+    val acc2=new account("02V",456,-5000)
+    val acc3=new account("03V",789,50000)
+    val acc4=new account("04V",198,-380)
 
-object Q3 extends App{
+    var Bank:List[account]=List(acc1,acc2,acc3,acc4)
 
-    printf("Money for transfer: ")
-    val trans=readInt()
-   
-    val person1=new Account("996632261V", 12345, 75000)
-    val person2=new Account("342312563V", 67891, 40000)
+    def checkNeg(List:List[account])={
+        List.filter(x=>x.Balanace<0)
+    }
+    println("\nNegative balance account: "+checkNeg(Bank)+"\n")
 
-    person1.transfer(person2,trans)
-    println("Balance of money sender: "+person1.Balance)
-    println("Balance of money receiver: "+person2.Balance)
+    SumAccount(Bank)
+    Interest(Bank)
 
+    def SumAccount(List:List[account])={
+        var sum=List.foldLeft(0.0)((sum,y)=>sum+y.Balanace) 
+        println("Sum of all account balances: "+sum+"\n")
+    }
+
+    def Interest(List:List[account])={
+        List.map(x=>{
+            if(x.Balanace>0){
+                x.Balanace=x.Balanace+x.Balanace*0.05
+                println("Final balance of account "+x.AcNo+"="+(x.Balanace))
+            }
+            else{
+                x.Balanace=x.Balanace+x.Balanace*0.1     
+                println("Final balance of account "+x.AcNo+"="+(x.Balanace))           
+            }
+        })
+    }
 }
 
-class Account(a:String, b:Int, c:Double){
-    val Nic:String=a
+class account(a:String, b:Int, c:Double){
+    val Nic:String=a;
     val AcNo:Int=b;
-    var Balance:Double=c;
-    override def toString ="["+Nic+":"+AcNo +":"+ Balance+"]"
+    var Balanace:Double=c
 
-    def withdraw(transfer_amount:Double)=this.Balance-transfer_amount;
-    def deposit(transfer_amount:Double)=this.Balance+transfer_amount;
+    override def toString ="["+Nic+":"+AcNo +":"+ Balanace+"]"
 
-    def transfer(acnt:Account,trans:Double) ={
-        this.Balance = this.withdraw(trans)
-        acnt.Balance=acnt.deposit(trans)
-    }
 }
